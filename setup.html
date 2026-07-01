@@ -3,26 +3,51 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>(function(){if(localStorage.getItem('exercisedb_theme')==='light')document.documentElement.classList.add('light-theme');})();</script>
   <title>Developer Setup · ExerciseDB</title>
   <style>
     /* ── Design Tokens ──────────────────────────────── */
     :root {
       --accent:         #ff4f00;
-      --accent-muted:   rgba(255,79,0,0.09);
-      --bg-base:        #f4f4f5;
-      --bg-surface:     #ffffff;
-      --bg-elevated:    #f0f0f1;
-      --border:         #e4e4e7;
-      --border-hover:   #c4c4c7;
-      --text-primary:   #111111;
-      --text-secondary: #71717a;
-      --text-tertiary:  #a1a1aa;
+      --accent-muted:   rgba(255,79,0,0.14);
+      --bg-base:        #0f1117;
+      --bg-surface:     #181c25;
+      --bg-elevated:    #1e2333;
+      --border:         #2a3045;
+      --border-hover:   #3a4258;
+      --text-primary:   #e8eaf0;
+      --text-secondary: #a4adc2;
+      --text-tertiary:  #6b7488;
       --radius-sm:  6px;
       --radius-md:  10px;
       --radius-lg:  14px;
       --radius-xl:  18px;
       --nav-w: 210px;
     }
+
+    html.light-theme {
+      --bg-base:        #f4f4f5;
+      --bg-surface:     #ffffff;
+      --bg-elevated:    #f0f0f1;
+      --border:         #e4e4e7;
+      --border-hover:   #c4c4c7;
+      --accent-muted:   rgba(255,79,0,0.08);
+      --text-primary:   #111111;
+      --text-secondary: #71717a;
+      --text-tertiary:  #a1a1aa;
+    }
+
+    .theme-toggle-setup {
+      display:flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:6px;
+      border:1px solid var(--border);background:var(--bg-elevated);
+      color:var(--text-secondary);cursor:pointer;transition:all .15s;flex-shrink:0;
+    }
+    .theme-toggle-setup:hover{border-color:var(--accent);color:var(--accent);}
+    .theme-toggle-setup svg{width:16px;height:16px;display:block;}
+    .ts-icon-sun{display:none;}
+    html.light-theme .ts-icon-moon{display:none;}
+    html.light-theme .ts-icon-sun{display:block;}
 
     /* ── Reset ──────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -335,8 +360,8 @@
       font-weight: 700;
       padding: 2px 7px;
       border-radius: var(--radius-sm);
-      background: #dcfce7;
-      color: #166534;
+      background: rgba(74,222,128,0.16);
+      color: #4ade80;
       letter-spacing: .04em;
     }
     .endpoint-path {
@@ -477,6 +502,10 @@
     </svg>
     Back to Browse
   </a>
+  <button class="theme-toggle-setup" id="theme-toggle-setup" title="Alternar tema claro/escuro">
+    <svg class="ts-icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 8.5A5.5 5.5 0 1 1 7.5 2.5a4.2 4.2 0 0 0 6 6Z"/></svg>
+    <svg class="ts-icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="3"/><path d="M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1M12.7 3.3l-1 1M4.3 11.7l-1 1M12.7 12.7l-1-1M4.3 4.3l-1-1"/></svg>
+  </button>
 </header>
 
 <!-- Shell -->
@@ -731,6 +760,19 @@
 </div>
 
 <script>
+// ── Theme ─────────────────────────────────────────
+(function(){
+  const saved = localStorage.getItem('exercisedb_theme');
+  if(saved === 'light') document.documentElement.classList.add('light-theme');
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('theme-toggle-setup');
+    if(btn) btn.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light-theme');
+      localStorage.setItem('exercisedb_theme', isLight ? 'light' : 'dark');
+    });
+  });
+})();
+
 // ══════════════════════════════════════════════════
 // ── DB SQL Templates ───────────────────────────────
 // ══════════════════════════════════════════════════
@@ -743,11 +785,7 @@ const DB_SQL = {
   body_part         NVARCHAR(100),
   equipment         NVARCHAR(100),
   instructions_en   NVARCHAR(MAX),
-  instructions_es   NVARCHAR(MAX),
-  instructions_it   NVARCHAR(MAX),
   instructions_tr   NVARCHAR(MAX),
-  instructions_ru   NVARCHAR(MAX),
-  instructions_zh   NVARCHAR(MAX),
   muscle_group      NVARCHAR(100),
   secondary_muscles NVARCHAR(MAX),  -- JSON array stored as string
   target            NVARCHAR(100),
@@ -762,11 +800,7 @@ const DB_SQL = {
   body_part         VARCHAR(100),
   equipment         VARCHAR(100),
   instructions_en   TEXT,
-  instructions_es   TEXT,
-  instructions_it   TEXT,
   instructions_tr   TEXT,
-  instructions_ru   TEXT,
-  instructions_zh   TEXT,
   muscle_group      VARCHAR(100),
   secondary_muscles JSONB,
   target            VARCHAR(100),
@@ -781,11 +815,7 @@ const DB_SQL = {
   body_part         VARCHAR(100),
   equipment         VARCHAR(100),
   instructions_en   TEXT,
-  instructions_es   TEXT,
-  instructions_it   TEXT,
   instructions_tr   TEXT,
-  instructions_ru   TEXT,
-  instructions_zh   TEXT,
   muscle_group      VARCHAR(100),
   secondary_muscles JSON,
   target            VARCHAR(100),
@@ -800,11 +830,7 @@ const DB_SQL = {
   body_part         TEXT,
   equipment         TEXT,
   instructions_en   TEXT,
-  instructions_es   TEXT,
-  instructions_it   TEXT,
   instructions_tr   TEXT,
-  instructions_ru   TEXT,
-  instructions_zh   TEXT,
   muscle_group      TEXT,
   secondary_muscles TEXT,  -- JSON array stored as string
   target            TEXT,
@@ -1021,7 +1047,7 @@ Console.WriteLine(exercise?.GifUrl);   // videos/0001.gif
 // Model
 record Exercise(
     string Id, string Name, string Category, string BodyPart,
-    string Equipment, string? InstructionsEn, string? InstructionsEs, string? InstructionsIt, string? InstructionsTr, string? InstructionsRu,
+    string Equipment, string? InstructionsEn, string? InstructionsTr,
     string MuscleGroup, string[] SecondaryMuscles, string Target,
     string Image, string GifUrl, string? CreatedAt
 );`,
@@ -1389,7 +1415,7 @@ function buildLlmPrompt(fwKey, dbKey) {
 
 ## Dataset Overview
 - 1,324 fitness exercises
-- Fields: id (string, e.g. "0001"), name, category, body_part, equipment, instructions_en (full text), instructions_es (Spanish text), instructions_it (Italian text), instructions_tr (Turkish text), instructions_ru (Russian text), instructions_zh (Chinese text), muscle_group, secondary_muscles (JSON array of strings), target, image (relative path like "images/0001.jpg"), gif_url (relative path like "videos/0001.gif"), created_at
+- Fields: id (string, e.g. "0001"), name, category, body_part, equipment, instructions_en (full text), instructions_tr (Turkish text), muscle_group, secondary_muscles (JSON array of strings), target, image (relative path like "images/0001.jpg"), gif_url (relative path like "videos/0001.gif"), created_at
 
 ## Database Schema (${db.name})
 \`\`\`sql
@@ -1512,11 +1538,7 @@ function buildInserts(exercises, db) {
     const instrEn = ex.instructions && ex.instructions.en
       ? ex.instructions.en
       : (Array.isArray(ex.instruction_steps) ? ex.instruction_steps.join(' ') : (ex.instructions || ''));
-    const instrEs = ex.instructions && ex.instructions.es ? ex.instructions.es : '';
-    const instrIt = ex.instructions && ex.instructions.it ? ex.instructions.it : '';
     const instrTr = ex.instructions && ex.instructions.tr ? ex.instructions.tr : '';
-    const instrRu = ex.instructions && ex.instructions.ru ? ex.instructions.ru : '';
-    const instrZh = ex.instructions && ex.instructions.zh ? ex.instructions.zh : '';
 
     const vals = [
       escStr(ex.id, db),
@@ -1525,11 +1547,7 @@ function buildInserts(exercises, db) {
       escStr(ex.body_part, db),
       escStr(ex.equipment, db),
       escStr(instrEn, db),
-      escStr(instrEs, db),
-      escStr(instrIt, db),
       escStr(instrTr, db),
-      escStr(instrRu, db),
-      escStr(instrZh, db),
       escStr(ex.muscle_group, db),
       escStr(muscles, db),
       escStr(ex.target, db),
@@ -1538,7 +1556,7 @@ function buildInserts(exercises, db) {
       escStr(ex.created_at, db),
     ].join(', ');
 
-    lines.push(`INSERT INTO exercises (id, name, category, body_part, equipment, instructions_en, instructions_es, instructions_it, instructions_tr, instructions_ru, instructions_zh, muscle_group, secondary_muscles, target, image, gif_url, created_at) VALUES (${vals});`);
+    lines.push(`INSERT INTO exercises (id, name, category, body_part, equipment, instructions_en, instructions_tr, muscle_group, secondary_muscles, target, image, gif_url, created_at) VALUES (${vals});`);
 
     if (db === 'mssql' && (i + 1) % 50 === 0 && i + 1 < exercises.length) {
       lines.push('GO');
